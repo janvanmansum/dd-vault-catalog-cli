@@ -145,12 +145,8 @@
                                 <apiPackage>nl.knaw.dans.catalogcli.client</apiPackage>
                                 <modelPackage>nl.knaw.dans.catalogcli.api</modelPackage>
                                 <invokerPackage>nl.knaw.dans.catalogcli.client</invokerPackage>
-                                <!-- the client does not appear to need annotations so we can remove them -->
                                 <annotationLibrary>none</annotationLibrary>
-                                <!-- this generates jersey2 client -->
                                 <library>jersey2</library>
-                                <!-- remove this optional dependency as it was not used in the generated code anyway  -->
-                                <!-- see https://github.com/OpenAPITools/jackson-databind-nullable -->
                                 <openApiNullable>false</openApiNullable>
                             </configOptions>
                         </configuration>

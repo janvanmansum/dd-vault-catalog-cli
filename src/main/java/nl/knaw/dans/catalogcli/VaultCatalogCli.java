@@ -15,12 +15,13 @@
  */
 package nl.knaw.dans.catalogcli;
 
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.core.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
 import nl.knaw.dans.catalogcli.client.ApiClient;
+import nl.knaw.dans.catalogcli.client.DefaultApi;
+import nl.knaw.dans.catalogcli.command.CreateSkeletonRecord;
 import nl.knaw.dans.catalogcli.config.VaultCatalogConfig;
 import nl.knaw.dans.lib.util.AbstractCommandLineApp;
+import nl.knaw.dans.lib.util.ClientProxyBuilder;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -40,18 +41,15 @@ public class VaultCatalogCli extends AbstractCommandLineApp<VaultCatalogConfig> 
 
     @Override
     public void configureCommandLine(CommandLine commandLine, VaultCatalogConfig config) {
+        DefaultApi api = new ClientProxyBuilder<ApiClient, DefaultApi>()
+            .apiClient(new ApiClient())
+            .basePath(config.getVaultCatalogService().getUrl())
+            .httpClient(config.getVaultCatalogService().getHttpClient())
+            .defaultApiCtor(DefaultApi::new)
+            .build();
+        log.debug("Configuring command line");
+        commandLine
+            .addSubcommand(new CreateSkeletonRecord(api));
 
     }
-
-    private void createDefaultApi(VaultCatalogConfig config) {
-        log.debug("Creating DefaultApi");
-        var client = new JerseyClientBuilder(new Environment(VaultCatalogCli.class.getSimpleName()))
-            .using(config.getVaultCatalogService().getHttpClient())
-            .build("vault-catalog-client");
-
-        var apiClient = new ApiClient();
-        apiClient.setHttpClient(client);
-        apiClient.setBasePath(config.getVaultCatalogService().getUrl().toString());
-    }
-
 }
