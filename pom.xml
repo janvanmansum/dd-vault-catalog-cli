@@ -21,7 +21,7 @@
     <parent>
         <groupId>nl.knaw.dans</groupId>
         <artifactId>dd-parent</artifactId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.3.1</version>
     </parent>
     <artifactId>dd-vault-catalog-cli</artifactId>
     <version>0.1.2-SNAPSHOT</version>
@@ -34,18 +34,15 @@
     <properties>
         <main-class>nl.knaw.dans.catalogcli.VaultCatalogCli</main-class>
         <command-name>vault-catalog</command-name>
-        <dd-vault-catalog.version>0.4.0-SNAPSHOT</dd-vault-catalog.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>nl.knaw.dans</groupId>
             <artifactId>dans-java-utils</artifactId>
-            <version>0.11.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>nl.knaw.dans</groupId>
             <artifactId>dans-validation-lib</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -54,7 +51,6 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.7.5</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -91,6 +87,11 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.knaw.dans</groupId>
+            <artifactId>dd-vault-catalog-api</artifactId>
+            <version>${dd-vault-catalog-api.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
