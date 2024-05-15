@@ -21,13 +21,14 @@ import nl.knaw.dans.catalogcli.client.DefaultApi;
 import nl.knaw.dans.catalogcli.command.CreateSkeletonRecord;
 import nl.knaw.dans.catalogcli.config.VaultCatalogConfig;
 import nl.knaw.dans.lib.util.AbstractCommandLineApp;
+import nl.knaw.dans.lib.util.CliVersionProvider;
 import nl.knaw.dans.lib.util.ClientProxyBuilder;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "vault-catalog",
          mixinStandardHelpOptions = true,
-         versionProvider = VersionProvider.class,
+         versionProvider = CliVersionProvider.class,
          description = "Manage the Data Vault Catalog.")
 @Slf4j
 public class VaultCatalogCli extends AbstractCommandLineApp<VaultCatalogConfig> {
