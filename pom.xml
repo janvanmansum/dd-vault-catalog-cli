@@ -34,6 +34,7 @@
     <properties>
         <main-class>nl.knaw.dans.catalogcli.VaultCatalogCli</main-class>
         <command-name>vault-catalog</command-name>
+        <dd-vault-catalog-api.version>0.7.0-SNAPSHOT</dd-vault-catalog-api.version>
     </properties>
     <dependencies>
         <dependency>
