@@ -1,5 +1,5 @@
 vaultCatalogService:
-  url: http://localhost:20365/
+  url: http://localhost:20305/
   httpClient:
     timeout: 30s
     connectionTimeout: 15s

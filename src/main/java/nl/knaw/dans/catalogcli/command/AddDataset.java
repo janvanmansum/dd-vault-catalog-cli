@@ -43,20 +43,44 @@ public class AddDataset implements Callable<Integer> {
             description = "The NBN of the dataset. If also present in the JSON file, the value from the command line overwrites the value from the file.")
     private String nbn;
 
-    @Parameters(index = "0", paramLabel = "json-file", description = "The JSON or YAML file containing the dataset to be added.")
-    private String jsonFile;
+    @Parameters(index = "0", paramLabel = "json-file", description = "The JSON or YAML file containing the dataset to be added. Use '-' to read from standard input.")
+    private Path jsonFile;
 
     @Override
     public Integer call() {
-        String json = null;
         try {
-            json = Files.readString(Path.of(jsonFile));
+            var json = readJson();
+            var objectMapper = getObjectMapper(jsonFile);
+            DatasetDto datasetDto = readDatasetDto(json, objectMapper);
+            addDataset(nbn, datasetDto);
+        }
+        catch (CommandException e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
+        return 0;
+    }
+
+    private String readJson() throws CommandException {
+        var source = "-".equals(jsonFile.toString()) ? "standard input" : jsonFile;
+        var json = "";
+        try {
+            if ("-".equals(jsonFile.toString())) {
+                json = new String(System.in.readAllBytes());
+            }
+            else {
+                json = Files.readString(jsonFile);
+            }
+            return json;
         }
         catch (IOException e) {
-            System.err.println("Error reading JSON file: " + e.getMessage());
+            throw new CommandException("Error reading JSON file " + source + ": " + e.getMessage(), e);
         }
+    }
+
+    private ObjectMapper getObjectMapper(Path jsonFile) {
         ObjectMapper objectMapper;
-        if (jsonFile.endsWith(".yaml") || jsonFile.endsWith(".yml")) {
+        if (jsonFile.getFileName().toString().endsWith(".yaml") || jsonFile.getFileName().toString().endsWith(".yml")) {
             objectMapper = new YAMLMapper();
         }
         else {
@@ -64,12 +88,14 @@ public class AddDataset implements Callable<Integer> {
         }
         // Add module for OffsetDateTime
         objectMapper.findAndRegisterModules();
-        DatasetDto datasetDto = null;
+        return objectMapper;
+    }
+
+    private DatasetDto readDatasetDto(String json, ObjectMapper objectMapper) throws CommandException {
         try {
-            datasetDto = objectMapper.readValue(json, DatasetDto.class);
+            var datasetDto = objectMapper.readValue(json, DatasetDto.class);
             if (datasetDto == null) {
-                System.err.println("Error reading JSON file: no dataset found");
-                return 1;
+                throw new CommandException("Error reading JSON file: no dataset found");
             }
             else if (nbn != null) {
                 datasetDto.setNbn(nbn);
@@ -79,18 +105,19 @@ public class AddDataset implements Callable<Integer> {
                     }
                 }
             }
+            return datasetDto;
         }
         catch (IOException e) {
-            System.err.println("Error reading JSON file: " + e.getMessage());
+            throw new CommandException("Error reading JSON file: " + e.getMessage(), e);
         }
+    }
 
+    private void addDataset(String nbn, DatasetDto datasetDto) throws CommandException {
         try {
             api.addDataset(nbn, datasetDto);
         }
         catch (ApiException e) {
-            System.err.println("Error adding dataset: " + e.getMessage());
+            throw new CommandException("Error adding dataset: " + e.getMessage(), e);
         }
-        return 0;
     }
-
 }
